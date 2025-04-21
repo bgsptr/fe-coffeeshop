@@ -6,6 +6,8 @@ import { Footer } from "../components/Footer";
 import { Navbar } from "../components/Navbar";
 import { useEffect, useState } from "react";
 import { fetchData } from "../utils/fetchData";
+import useCart from "../hooks/useCart";
+import { LoadingSpinner } from "../components/LoadingSpinner";
 
 export interface Item {
   category: string; //ENUM
@@ -28,8 +30,13 @@ export interface OrderData {
 export const Menu = (): JSX.Element => {
   const [keyword] = useState("");
   const [orderId, setOrderId] = useState(null);
-  const [items, setItems] = useState<Item[]>([]);
+  const [localStoreOrderId] = useState(localStorage.getItem("cart_id"));
+  // const [localStoreOrderId] = useCart();
+  // const [items, setItems] = useState<Item[]>([]);
   const [orderItemsId, setOrderItemsId] = useState<string[]>([]);
+  const [buttonAddCart, setButtonAddCart] = useState<boolean>(false);
+
+  const cartSwitch = useCart();
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -37,18 +44,23 @@ export const Menu = (): JSX.Element => {
       try {
         const res = await fetchData(url);
         console.log(res);
-        setItems(res.result);
+        // setItems(res.result);
+        cartSwitch.setItems(res.result);
       } catch (err) {
         console.log(err);
       }
     };
 
     const compareItemInCart = async () => {
-      const url = `http://localhost:3000/orders/first/orderItems`;
+      if (!localStorage.getItem("cart_id")) return;
+      // const url = `http://localhost:3000/orders/first/orderItems`;
+      // const url = `http://localhost:3000/orders/${localStoreOrderId}/orderItems`;
+      const url = `http://localhost:3000/orders/${cartSwitch.cartInit}/orderItems`;
       try {
         const res = await fetchData(url);
         console.log("compare cart: ", res);
         setOrderItemsId(res.result.orderItemsId);
+        
         setOrderId(res.result.orderId);
       } catch (err) {
         console.log(err);
@@ -58,10 +70,13 @@ export const Menu = (): JSX.Element => {
     fetchItem();
     compareItemInCart();
 
+    cartSwitch.setCartRefresh(false);
+
     return () => {
-      setItems([]);
+      cartSwitch.setItems([]);
+      // cartSwitch.setCartRefresh(false);
     };
-  }, []);
+  }, [cartSwitch.carts]);
 
   useEffect(() => {
     console.log(orderItemsId);
@@ -72,24 +87,28 @@ export const Menu = (): JSX.Element => {
     <div className="font-poppins flex flex-col min-h-screen">
       <Navbar />
       {/* body */}
-      <div className="bg-[#B5B5B5] flex-grow">
-        {/* card */}
-        <div className="p-[3rem]">
-          <div className="flex gap-[4rem] flex-wrap justify-center">
-            {items?.map((item) => (
-              <MenuCard
-                key={item.id}
-                item={item}
-                isOrdered={orderItemsId.some(
-                  (value) => parseInt(value, 10) === item.id
-                )}
-                orderId={orderId}
-              />
-            ))}
+      {cartSwitch.cartIsRefresh ? (
+        <LoadingSpinner />
+      ) : (
+        <div className="bg-[#B5B5B5] flex-grow">
+          {/* card */}
+          <div className="p-[3rem]">
+            <div className="flex gap-[4rem] flex-wrap justify-center">
+              {cartSwitch.items?.map((item) => (
+                <MenuCard
+                  key={item.id}
+                  item={item}
+                  isOrdered={orderItemsId.some(
+                    (value) => parseInt(value, 10) === item.id
+                  )}
+                  orderId={orderId}
+                />
+              ))}
+            </div>
           </div>
+          {/* card */}
         </div>
-        {/* card */}
-      </div>
+      )}
       {/* body */}
       <Footer />
     </div>

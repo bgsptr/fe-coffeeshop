@@ -48,10 +48,12 @@ export interface CartItem {
 }
 
 export interface CheckoutData {
+  order_id: number;
   cart_items?: CartItem[];
   total_price: number;
   total_items: number;
-  payment_method?: string;
+  payment_type: string;
+  online_method?: string;
   shipping_cost: number;
   tax_amount: number;
   grand_total: number;
@@ -331,10 +333,12 @@ export const Checkout = () => {
   }, [distance]);
 
   const [checkoutData, setCheckoutData] = useState<CheckoutData>({
+    order_id: 0,
     cart_items: [],
     total_price: 0,
     total_items: 0,
-    payment_method: "",
+    payment_type: "",
+    online_method: "",
     shipping_cost: 0,
     tax_amount: 0,
     grand_total: 0,
@@ -551,11 +555,41 @@ export const Checkout = () => {
   const [selectedRadioBank, setSelectedRadioBank] = useState("bca");
 
   const handleRadioBankChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSelectedRadioBank(e.target.value);
+    const value = e.target.value;
+    setSelectedRadioBank(value);
+
+    setCheckoutData((prev) => ({
+      ...prev,
+      payment_type: value === "cash" ? "cash" : "online",
+      ...(value !== "cash" && { online_method: value }),
+    }));
   };
 
   const radioIsChecked = (buttonName: string) => {
     return selectedRadioBank === buttonName;
+  };
+
+  const makePaymentEvent = async () => {
+    const {
+      grand_total: amount,
+      order_id: orderId,
+      payment_type: paymentType,
+      online_method: onlineMethod,
+    } = checkoutData;
+
+    const url = `${variables.BASE_URL}/payments`;
+    try {
+      const res = await sendData(url, JSON.stringify({
+        orderId,
+        amount,
+        paymentType,
+        onlineMethod
+      }));
+
+      
+    } catch (err) {
+      console.error(err)
+    }
   };
 
   return (
@@ -947,11 +981,11 @@ export const Checkout = () => {
                 </div>
               ))}
             </div>
-            <button id="pay-button" onClick={payButton}>
+            {/* <button id="pay-button" onClick={payButton}>
               Pay!
             </button>
 
-            <div id="snap-container"></div>
+            <div id="snap-container"></div> */}
           </div>
 
           {/* Right Section (30%) */}
@@ -964,6 +998,41 @@ export const Checkout = () => {
                   Lihat Semua
                 </button>
               </div>
+              <div className="mt-3 border-b pb-3">
+                <div className="flex gap-3 justify-between">
+                  <img src="" alt="" />
+                  <div>
+                    <p className="font-semibold">COD</p>
+                    <p className="text-gray-600 text-sm">
+                      Bayar Langsung di Tempat
+                    </p>
+                  </div>
+                  <Radio
+                    checked={radioIsChecked("cash")}
+                    onChange={handleRadioBankChange}
+                    value="cash"
+                    name="radio-buttons"
+                  />
+                </div>
+              </div>
+              <div className="mt-3 border-b pb-3">
+                <div className="flex gap-3 justify-between">
+                  <img src="" alt="" />
+                  <div>
+                    <p className="font-semibold">Pembayaran Online</p>
+                    <p className="text-gray-600 text-sm">
+                      Mudah & terverifikasi otomatis
+                    </p>
+                  </div>
+                  {/* <Radio
+                    checked={radioIsChecked("online")}
+                    onChange={handleRadioBankChange}
+                    value="online"
+                    name="radio-buttons"
+                  /> */}
+                </div>
+              </div>
+
               <div className="mt-3 border-b pb-3">
                 <div className="flex gap-3 justify-between">
                   <img src="" alt="" />
@@ -1063,7 +1132,7 @@ export const Checkout = () => {
                     <p>Total Ongkos Kirim</p>
                     <p>
                       Rp
-                      {shippingCost}
+                      {shippingCost === "NaN" ? 0 : shippingCost}
                     </p>
                   </div>
                 </div>
@@ -1085,7 +1154,10 @@ export const Checkout = () => {
                     : "0.00"}
                 </p>
               </div>
-              <button className="w-full mt-4 bg-green-500 text-white font-bold py-2 rounded-md flex items-center justify-center gap-2">
+              <button
+                onClick={makePaymentEvent}
+                className="w-full mt-4 bg-green-500 text-white font-bold py-2 rounded-md flex items-center justify-center gap-2"
+              >
                 <span>✔</span> Bayar Sekarang
               </button>
             </div>

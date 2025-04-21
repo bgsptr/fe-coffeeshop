@@ -24,7 +24,7 @@ const CustomInput = ({
         value={value}
         name={elementName}
         onChange={handleValueChange}
-        className="peer block w-full rounded-md border border-gray-300 bg-transparent px-3 pt-7 pb-2 text-gray-900 focus:pt-7 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+        className="peer block w-full hover:bg-white rounded-md border border-gray-300 bg-transparent px-3 pt-7 pb-2 text-gray-900 focus:pt-7 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
         placeholder=" "
       />
       <label

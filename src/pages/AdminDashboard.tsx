@@ -1,8 +1,51 @@
+import { useEffect, useState } from "react";
 import { ButtonFilter } from "../components/ButtonFilter";
 import { Navbar } from "../components/Navbar";
 import { OrderCard } from "../components/OrderCard";
+import { variables } from "../constants/variable";
+import { fetchData } from "../utils/fetchData";
+import { PaymentTypeEnum } from "../components/types";
+
+export interface OrderDashboard {
+  id: string;
+  amount: string;
+  paymentType: PaymentTypeEnum;
+  transactionDate: string;
+  order: {
+    id: number;
+    totalPrice: string;
+  };
+  user: {
+    addresses: [
+      {
+        fullAddress: string;
+        postalCode: string;
+        estimatedTime: number;
+      }
+    ];
+  };
+}
 
 export const AdminDashboard = () => {
+  const [orderDashboard, setOrderDashboard] = useState<OrderDashboard[]>([]);
+  const fetchOrderDashboardData = async () => {
+    const url = `${variables.BASE_URL}/payments/list/orders`;
+    try {
+      const response = await fetchData(url);
+      setOrderDashboard(response.result);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrderDashboardData();
+  }, []);
+
+  useEffect(() => {
+    console.log(orderDashboard);
+  }, [orderDashboard]);
+
   return (
     <div>
       <Navbar />
@@ -20,8 +63,10 @@ export const AdminDashboard = () => {
             <ButtonFilter buttonName="Pesanan Dibatalkan" />
           </div>
           <div className="flex flex-col gap-7">
-            <OrderCard />
-            <OrderCard />
+            {orderDashboard.map((order) => (
+              <OrderCard payment={order} />
+            ))}
+            {/* <OrderCard order={orderDashboard} /> */}
           </div>
         </div>
       </div>

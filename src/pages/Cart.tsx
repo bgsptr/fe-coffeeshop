@@ -17,6 +17,7 @@ export interface ItemInCart {
 
 export interface CheckoutDto {
   // user_id: string;
+  order_id: number
   cart_items: Partial<ItemInCart>[];
   total_price: number;
   shipping_address: string | null;
@@ -148,6 +149,7 @@ export const Cart = () => {
     console.log("button checkout clicked")
     const url = `${variables.BASE_URL}/sessions/checkout`;
     const data: CheckoutDto = {
+      order_id: Number(params.cart_id),
       cart_items: orderData,
       total_price: totalPrice,
       shipping_address: null,

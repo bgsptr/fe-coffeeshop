@@ -8,7 +8,6 @@ import { fetchData } from "../utils/fetchData";
 import { variables } from "../constants/variable";
 import CustomizedDialogs from "../components/CustomizedDialogs";
 import useDialog from "../hooks/useDialog";
-import { shallow } from 'zustand/shallow';
 
 const OrderHistory = () => {
   const [orderList, setOrderList] = useState<any[]>([]);
@@ -25,7 +24,7 @@ const OrderHistory = () => {
 
   const dialog = useDialog();
 
-  const [dialogIsOpen, setDialogIsOpen] = useState(true);
+  // const [dialogIsOpen, setDialogIsOpen] = useState(true);
 
   const fetchPaymentOrderList = async () => {
     try {

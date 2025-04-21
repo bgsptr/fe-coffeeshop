@@ -1,14 +1,42 @@
 import axios from "axios";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { variables } from "../constants/variable";
 import leftLogin from "../assets/candra/left-login-cafe.svg";
 import Cookies from "js-cookie";
 import CustomInput from "../components/CustomInput";
 import { CustomInputType } from "../components/types";
+import { RoundedLoginButton } from "../components/RoundedLoginButton";
+import { Divider } from "@mui/material";
 
 const Login = () => {
   // const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const googleSignIn = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    console.log("google click");
+
+    const url = `${variables.BASE_URL}/users/oauth2/google`;
+    try {
+      const res = await axios.get(url, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const { result } = res.data;
+
+      if (result) {
+        console.log(result);
+        localStorage.clear();
+
+        window.open(result);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const [login, setLogin] = useState({
     email: "",
@@ -21,8 +49,6 @@ const Login = () => {
       [e.target.name]: e.target.value,
     });
   };
-
-  const navigate = useNavigate();
 
   const url = `${variables.BASE_URL}/users/login`;
 
@@ -40,7 +66,8 @@ const Login = () => {
       console.log("token", res.data);
       const { token } = res.data;
       Cookies.set("token", token);
-      localStorage.setItem("token", token);
+      // localStorage.setItem("token", token);
+      localStorage.clear();
 
       setTimeout(() => {
         navigate("/menu");
@@ -66,10 +93,16 @@ const Login = () => {
         <h1 className="text-3xl font-bold text-[#525252]">
           Sign In to your Account
         </h1>
-        <p className="text-md text-black font-normal text-[#525252]">
+        <p className="text-md text-black font-normal text-[#525252] mb-4">
           See what is going on with your business
         </p>
-        <form action="h-full flex flex-col gap-9">
+
+        <form action="h-full flex flex-col gap-9" method="POST">
+          <RoundedLoginButton
+            name="Continue with Google"
+            event={googleSignIn}
+          />
+          <Divider className="text-grey">Or</Divider>
           <div className="w-full">
             {/* <label
               htmlFor="email"
@@ -94,7 +127,6 @@ const Login = () => {
               handleValueChange={handleChange}
             />
           </div>
-
           <div className="w-full">
             {/* <label
               htmlFor="password"
