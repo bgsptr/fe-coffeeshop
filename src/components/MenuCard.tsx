@@ -8,6 +8,7 @@ import buttonPlus from "../assets/candra/button-order-plus.svg";
 import { Item, OrderData } from "../pages/Menu";
 import { sendData } from "../utils/sendData";
 import { useNavigate } from "react-router-dom";
+import { variables } from "../constants/variable";
 
 export const MenuCard = (props: {
   item: Item;
@@ -27,7 +28,7 @@ export const MenuCard = (props: {
 
     if (data.quantity <= 0) return;
 
-    const url = `http://localhost:3000/orders`;
+    const url = `${variables.BASE_URL}/orders`;
     try {
       await sendData(url, data);
       navigate(0);
@@ -61,7 +62,7 @@ export const MenuCard = (props: {
       {/* Image with hover effect */}
       <div className="relative group overflow-hidden">
         <img
-          src={rectangle37}
+          src={item.image}
           alt=""
           className="w-full h-auto transition-opacity duration-300 group-hover:opacity-25"
         />
