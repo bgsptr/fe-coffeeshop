@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import line3 from "../assets/candra/line-3.svg";
 import line4 from "../assets/candra/line-4.svg";
 import line5 from "../assets/candra/line-5.svg";
-import rectangle37 from "../assets/candra/rectangle-37.png";
+// import rectangle37 from "../assets/candra/rectangle-37.png";
 import buttonMin from "../assets/candra/button-order-min.svg";
 import buttonPlus from "../assets/candra/button-order-plus.svg";
 import { Item, OrderData } from "../pages/Menu";
