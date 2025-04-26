@@ -20,6 +20,8 @@ on:
         required: true
       NETWORK_TAG:
         required: true
+      DOCKERHUB_TOKEN:
+        required: true
 
      
 jobs:
