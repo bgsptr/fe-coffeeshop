@@ -15,7 +15,7 @@ interface DialogStore extends QrisTransactionDialog {
 const useDialog = create<DialogStore>((set) => ({
   url: "",
   qrString: "",
-  isClosed: false,
+  isClosed: true,
 
   openDialog: (data) =>
     set(() => ({

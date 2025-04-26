@@ -14,6 +14,7 @@ export interface ItemInCart {
   description: string;
   subtotal: string;
   quantity: number;
+  image: string;
 }
 
 export interface CheckoutDto {

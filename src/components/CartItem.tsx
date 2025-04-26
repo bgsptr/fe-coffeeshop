@@ -1,4 +1,4 @@
-import rectangle37 from "../assets/candra/rectangle-37.png";
+// import rectangle37 from "../assets/candra/rectangle-37.png";
 import line3 from "../assets/candra/line-3.svg";
 import line4 from "../assets/candra/line-4.svg";
 import line5 from "../assets/candra/line-5.svg";
@@ -46,7 +46,7 @@ export const CartItem = (props: {
         {/* Product Image */}
         <div className="flex justify-center md:w-1/3">
           <img
-            src={rectangle37}
+            src={order.image}
             alt="Product"
             className="w-[12rem] md:w-[16rem] rounded-md"
           />
