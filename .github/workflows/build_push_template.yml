@@ -1,0 +1,109 @@
+name: Build and Push Template Service
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
+    secrets:
+      WORKLOAD_IDENTITY_PROVIDER:
+        required: true
+      SERVICE_ACCOUNT:
+        required: true
+      VPC_NETWORK:
+        required: true
+      VPC_SUBNET:
+        required: true
+      NETWORK_TAG:
+        required: true
+
+     
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Create nginx configuration file
+        run: |
+          rm -rf nginx/
+          mkdir nginx.conf
+          cat <<EOF > nginx/nginx.conf
+          server {
+            listen 80;
+            server_name ${{ vars.FRONTEND_URL }};
+            root /usr/share/nginx/html;
+            index index.html;
+
+            location / {
+              try_files \$uri /index.html =404;
+            }
+          }
+          EOF
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Deploy to Docker repo
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ vars.DOCKER_IMAGE_URL }}
+            ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID_GCP }}/${{ vars.GCLOUD_ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }}:${{ github.sha }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Google Auth
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          token_format: access_token
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT }}
+
+      - name: Declare Service
+        run: |-
+          export CONTAINER_IMAGE=${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID_GCP }}/${{ vars.GCLOUD_ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }}:${{ inputs.tag }}
+          export SERVICE_NAME=${{ vars.SERVICE_NAME }}
+          export REGION="${{ vars.REGION }}"
+          export VPC_NETWORK="${{ secrets.VPC_NETWORK }}"
+          export VPC_SUBNET="${{ secrets.VPC_SUBNET }}"
+          export NETWORK_TAG="${{ secrets.NETWORK_TAG }}"
+          envsubst < deployment/frontend_service.yml > container-${{ inputs.environment }}.yaml
+          cat container-${{ inputs.environment }}.yaml
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ vars.SERVICE_NAME }}
+          region: ${{ vars.REGION }}
+          metadata: container-${{ inputs.environment }}.yaml
+
+      - name: Show output URL
+        run: echo ${{ steps.deploy.outputs.url }}
+

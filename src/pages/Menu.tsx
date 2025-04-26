@@ -30,11 +30,11 @@ export interface OrderData {
 export const Menu = (): JSX.Element => {
   const [keyword] = useState("");
   const [orderId, setOrderId] = useState(null);
-  const [localStoreOrderId] = useState(localStorage.getItem("cart_id"));
+  // const [localStoreOrderId] = useState(localStorage.getItem("cart_id"));
   // const [localStoreOrderId] = useCart();
   // const [items, setItems] = useState<Item[]>([]);
   const [orderItemsId, setOrderItemsId] = useState<string[]>([]);
-  const [buttonAddCart, setButtonAddCart] = useState<boolean>(false);
+  // const [buttonAddCart, setButtonAddCart] = useState<boolean>(false);
 
   const cartSwitch = useCart();
 

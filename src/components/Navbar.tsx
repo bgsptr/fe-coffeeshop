@@ -3,7 +3,7 @@ import logo from "../assets/candra/logo.svg";
 import { useEffect, useState } from "react";
 import { fetchData } from "../utils/fetchData";
 import { variables } from "../constants/variable";
-import SwitchButton from "./SwitchButton";
+// import SwitchButton from "./SwitchButton";
 import useCart from "../hooks/useCart";
 import IconButtonWithBadge from "./IconButtonWithBadge";
 
@@ -19,9 +19,9 @@ export const Navbar = () => {
     navigate(`../${param}`);
   };
 
-  const [dropdownIsHovered, setDropdownIsHovered] = useState(false);
+  const [dropdownIsHovered, ] = useState(false);
   const [carts, setCarts] = useState<any[]>([]);
-  const [selectedSwitch, setSelectedSwitch] = useState<SwitchCart[]>([]);
+  const [selectedSwitch, ] = useState<SwitchCart[]>([]);
 
   useEffect(() => {
     // console.log(dropdownIsHovered)

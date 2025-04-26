@@ -502,55 +502,55 @@ export const Checkout = () => {
     return () => clearInterval(countdown);
   }, []);
 
-  const payButton = async () => {
-    const onlinePaymentUrl = `${variables.BASE_URL}/payments/online`;
-    // const serverKey = process.env.SERVER_KEY_MIDTRANS;
-    // const base64ServerKey = Buffer.from(serverKey + ":").toString("base64");
+  // const payButton = async () => {
+  //   const onlinePaymentUrl = `${variables.BASE_URL}/payments/online`;
+  //   // const serverKey = process.env.SERVER_KEY_MIDTRANS;
+  //   // const base64ServerKey = Buffer.from(serverKey + ":").toString("base64");
 
-    try {
-      const res = await axios.post(
-        onlinePaymentUrl,
-        JSON.stringify({
-          transaction_details: {
-            order_id: "5",
-            gross_amount: 100,
-          },
-        }),
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+  //   try {
+  //     const res = await axios.post(
+  //       onlinePaymentUrl,
+  //       JSON.stringify({
+  //         transaction_details: {
+  //           order_id: "5",
+  //           gross_amount: 100,
+  //         },
+  //       }),
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         withCredentials: true,
+  //       }
+  //     );
 
-      const { token, redirect_url } = res.data.result;
+  //     const { token, redirect_url } = res.data.result;
 
-      console.log("pay clicked");
-      window.snap.embed(token, {
-        embedId: "snap-container",
-        onSuccess: function (result) {
-          /* You may add your own implementation here */
-          alert("payment success!");
-          console.log(result);
-        },
-        onPending: function (result) {
-          /* You may add your own implementation here */
-          alert("wating your payment!");
-          console.log(result);
-        },
-        onError: function (result) {
-          /* You may add your own implementation here */
-          alert("payment failed!");
-          console.log(result);
-        },
-        onClose: function () {
-          /* You may add your own implementation here */
-          alert("you closed the popup without finishing the payment");
-        },
-      });
-    } catch (err) {}
-  };
+  //     console.log("pay clicked");
+  //     window.snap.embed(token, {
+  //       embedId: "snap-container",
+  //       onSuccess: function (result) {
+  //         /* You may add your own implementation here */
+  //         alert("payment success!");
+  //         console.log(result);
+  //       },
+  //       onPending: function (result) {
+  //         /* You may add your own implementation here */
+  //         alert("wating your payment!");
+  //         console.log(result);
+  //       },
+  //       onError: function (result) {
+  //         /* You may add your own implementation here */
+  //         alert("payment failed!");
+  //         console.log(result);
+  //       },
+  //       onClose: function () {
+  //         /* You may add your own implementation here */
+  //         alert("you closed the popup without finishing the payment");
+  //       },
+  //     });
+  //   } catch (err) {}
+  // };
 
   const [selectedRadioBank, setSelectedRadioBank] = useState("bca");
 
@@ -585,6 +585,8 @@ export const Checkout = () => {
         paymentType,
         onlineMethod
       }));
+
+      console.log(res);
 
       
     } catch (err) {

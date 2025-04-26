@@ -48,7 +48,8 @@ export const AdminTransaction = () => {
     const url = `${variables.BASE_URL}/payments`;
 
     try {
-      const { success, statusCode, message, result } = await fetchData(url);
+      // const { success, statusCode, message, result } = await fetchData(url);
+      const { result } = await fetchData(url);
 
       console.log(result);
 
