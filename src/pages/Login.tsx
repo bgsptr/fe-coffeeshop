@@ -63,8 +63,8 @@ const Login = () => {
         withCredentials: true,
       });
 
-      console.log("token", res.data);
-      const { token } = res.data;
+      console.log("token", res.data.result);
+      const { token } = res.data.result;
       Cookies.set("token", token, { expires: 7 })
       // localStorage.setItem("token", token);
       localStorage.clear();
