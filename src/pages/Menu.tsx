@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { fetchData } from "../utils/fetchData";
 import useCart from "../hooks/useCart";
 import { LoadingSpinner } from "../components/LoadingSpinner";
+import { variables } from "../constants/variable";
 
 export interface Item {
   category: string; //ENUM
@@ -40,7 +41,7 @@ export const Menu = (): JSX.Element => {
 
   useEffect(() => {
     const fetchItem = async () => {
-      const url = `http://localhost:3000/items?keyword=${keyword}`;
+      const url = `${variables.BASE_URL}/items?keyword=${keyword}`;
       try {
         const res = await fetchData(url);
         console.log(res);
@@ -55,7 +56,7 @@ export const Menu = (): JSX.Element => {
       if (!localStorage.getItem("cart_id")) return;
       // const url = `http://localhost:3000/orders/first/orderItems`;
       // const url = `http://localhost:3000/orders/${localStoreOrderId}/orderItems`;
-      const url = `http://localhost:3000/orders/${cartSwitch.cartInit}/orderItems`;
+      const url = `${variables.BASE_URL}/orders/${cartSwitch.cartInit}/orderItems`;
       try {
         const res = await fetchData(url);
         console.log("compare cart: ", res);
