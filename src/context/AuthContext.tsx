@@ -23,9 +23,10 @@ export const AuthProvider = ({ children }: Props) => {
             try {
                 const res = await axios.get(`${variables.BASE_URL}/users/role`, {
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "Authorization": `${ Cookies.get("token") }`
                     },
-                    withCredentials: true
+                    // withCredentials: true
                 });
                 console.log(res.data);
                 setRole(res.data?.role);

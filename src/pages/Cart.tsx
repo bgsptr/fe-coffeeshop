@@ -2,11 +2,11 @@ import { Navbar } from "../components/Navbar";
 import { CartItem } from "../components/CartItem";
 import cartIcon from "../assets/candra/cart-icon.svg";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { variables } from "../constants/variable";
 import { sendData } from "../utils/sendData";
 import { fetchData } from "../utils/fetchData";
+import patchData from "../utils/patchData";
 
 export interface ItemInCart {
   id: number;
@@ -18,7 +18,7 @@ export interface ItemInCart {
 
 export interface CheckoutDto {
   // user_id: string;
-  order_id: number
+  order_id: number;
   cart_items: Partial<ItemInCart>[];
   total_price: number;
   shipping_address: string | null;
@@ -38,13 +38,13 @@ export const Cart = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [, setError] = useState("");
   const params = useParams();
-  const [reloaded, ] = useState<boolean>(false);
+  const [reloaded] = useState<boolean>(false);
   const [qty, setQty] = useState<number>(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     console.log(params);
-  }, [])
+  }, []);
 
   // const fetchData = async (url: string) => {
   //   try {
@@ -61,21 +61,6 @@ export const Cart = () => {
   //     throw err;
   //   }
   // };
-
-  const patchData = async (url: string, body: any) => {
-    try {
-      const res = await axios.patch(url, body, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
-      console.log(res.data);
-    } catch (err) {
-      console.error("Error fetching order:", err);
-      throw err;
-    }
-  };
 
   useEffect(() => {
     const url = `${variables.BASE_URL}/orders/${params.cart_id}`;
@@ -103,7 +88,6 @@ export const Cart = () => {
     // const currentQuantity = isNaN(prevOrder.quantity) ? 0 : prevOrder.quantity;
 
     if (e.currentTarget.name === "substract") {
-
       setOrderData(
         orderData.map((prevOrder) => {
           if (prevOrder.id === orderItemId) {
@@ -115,39 +99,37 @@ export const Cart = () => {
           return prevOrder;
         })
       );
-
     } else if (e.currentTarget.name === "add") {
       setOrderData(
         orderData.map((prevOrder) => {
           if (prevOrder.id === orderItemId) {
             return {
               ...prevOrder,
-              quantity: !isNaN(prevOrder.quantity) ? (prevOrder.quantity + 1) : 0,
+              quantity: !isNaN(prevOrder.quantity) ? prevOrder.quantity + 1 : 0,
             };
           }
           return prevOrder;
         })
       );
     }
-    console.log(e.currentTarget.dataset.value)
+    console.log(e.currentTarget.dataset.value);
 
     const url = `${variables.BASE_URL}/order_items/${orderItemId}`;
     const updatedOrder = orderData.find((order) => order.id === orderItemId);
     if (updatedOrder && Number(currQty) !== 0) {
-      console.log(typeof currQty)
+      console.log(typeof currQty);
       patchData(url, { quantity: currQty });
-      setQty(currQty)
+      setQty(currQty);
       // setReloaded(true);
     }
   };
 
   useEffect(() => {
-    console.log(orderData[0]?.quantity)
-  }, [orderData])
+    console.log(orderData[0]?.quantity);
+  }, [orderData]);
 
   const onClickCheckoutCart = async () => {
-
-    console.log("button checkout clicked")
+    console.log("button checkout clicked");
     const url = `${variables.BASE_URL}/sessions/checkout`;
     const data: CheckoutDto = {
       order_id: Number(params.cart_id),
@@ -162,11 +144,11 @@ export const Cart = () => {
     try {
       await sendData(url, data);
 
-      navigate("../cart/checkout")
+      navigate("../cart/checkout");
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 
   return (
     <div className="font-poppins w-full">
@@ -176,7 +158,12 @@ export const Cart = () => {
       <div className="bg-[#B5B5B5] min-h-screen w-full py-[2.3rem]">
         {/* card cart */}
         {orderData?.map((order: ItemInCart) => (
-          <CartItem order={order} clickedQty={onClickAddOrMin} isReloaded={reloaded} qty={qty} />
+          <CartItem
+            order={order}
+            clickedQty={onClickAddOrMin}
+            isReloaded={reloaded}
+            qty={qty}
+          />
         ))}
 
         <div className="bg-[#EAE4E4] w-4/5 mx-auto h-[4rem] rounded-lg flex justify-between items-center fixed bottom-0 left-[10%]">
@@ -185,9 +172,10 @@ export const Cart = () => {
           </div>
           <div className="flex items-center gap-9 p-8">
             <h6 className="text-lg">Rp.{totalPrice}</h6>
-            <button 
-            onClick={onClickCheckoutCart}
-            className="bg-[#2D3E70] text-white rounded-md px-6 py-3">
+            <button
+              onClick={onClickCheckoutCart}
+              className="bg-[#2D3E70] text-white rounded-md px-6 py-3"
+            >
               Checkout
             </button>
           </div>
