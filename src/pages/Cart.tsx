@@ -6,6 +6,7 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { variables } from "../constants/variable";
 import { sendData } from "../utils/sendData";
+import { fetchData } from "../utils/fetchData";
 
 export interface ItemInCart {
   id: number;
@@ -45,21 +46,21 @@ export const Cart = () => {
     console.log(params);
   }, [])
 
-  const fetchData = async (url: string) => {
-    try {
-      const res = await axios.get(url, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
-      const { result } = res.data;
-      return result;
-    } catch (err) {
-      console.error("Error fetching order:", err);
-      throw err;
-    }
-  };
+  // const fetchData = async (url: string) => {
+  //   try {
+  //     const res = await axios.get(url, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       withCredentials: true,
+  //     });
+  //     const { result } = res.data;
+  //     return result;
+  //   } catch (err) {
+  //     console.error("Error fetching order:", err);
+  //     throw err;
+  //   }
+  // };
 
   const patchData = async (url: string, body: any) => {
     try {
