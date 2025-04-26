@@ -46,8 +46,8 @@ jobs:
           mkdir nginx
           cat <<EOF > nginx/nginx.conf
           server {
-            listen 80;
-            server_name ${{ vars.FRONTEND_URL }};
+            listen 8080;
+            server_name localhost;
             root /usr/share/nginx/html;
             index index.html;
 
