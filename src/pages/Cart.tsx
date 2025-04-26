@@ -82,10 +82,10 @@ export const Cart = () => {
 
     const fetchOrder = async () => {
       try {
-        const data = await fetchData(url);
-        if (data?.items.length === 0) navigate("../menu", { replace: true });
-        setOrderData(data.items);
-        setTotalPrice(data.totalPrice);
+        const { result } = await fetchData(url);
+        if (result?.items.length === 0) navigate("../menu", { replace: true });
+        setOrderData(result.items);
+        setTotalPrice(result.totalPrice);
       } catch (err) {
         setError("Failed to fetch order data");
       }
