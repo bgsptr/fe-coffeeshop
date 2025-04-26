@@ -64,7 +64,7 @@ const Login = () => {
       });
 
       console.log("token", res.data.result);
-      const { token } = res.data.result;
+      const token = res.data.result;
       Cookies.set("token", token)
       // localStorage.setItem("token", token);
       localStorage.clear();
