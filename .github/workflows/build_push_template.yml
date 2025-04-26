@@ -41,7 +41,7 @@ jobs:
       - name: Create nginx configuration file
         run: |
           rm -rf nginx/
-          mkdir nginx.conf
+          mkdir nginx
           cat <<EOF > nginx/nginx.conf
           server {
             listen 80;
