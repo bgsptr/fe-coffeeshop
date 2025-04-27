@@ -44,6 +44,7 @@ export interface CartItem {
   name: string;
   quantity: number;
   subtotal: number;
+  image: string;
   // price: number;
 }
 
@@ -970,7 +971,7 @@ export const Checkout = () => {
                   className="flex items-center gap-4 border-b pb-3 mb-3"
                 >
                   <img
-                    src=""
+                    src={data.image}
                     alt="Product"
                     className="w-16 h-16 bg-gray-200 rounded-md"
                   />

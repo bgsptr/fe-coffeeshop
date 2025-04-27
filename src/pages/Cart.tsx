@@ -7,6 +7,7 @@ import { variables } from "../constants/variable";
 import { sendData } from "../utils/sendData";
 import { fetchData } from "../utils/fetchData";
 import patchData from "../utils/patchData";
+import { debounce } from "lodash";
 
 export interface ItemInCart {
   id: number;
@@ -40,7 +41,7 @@ export const Cart = () => {
   const [, setError] = useState("");
   const params = useParams();
   const [reloaded] = useState<boolean>(false);
-  const [qty, setQty] = useState<number>(0);
+  // const [qty, setQty] = useState<number>(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,24 +64,58 @@ export const Cart = () => {
   //   }
   // };
 
-  useEffect(() => {
+  const fetchOrder = async (moreThanOnce?: boolean) => {
     const url = `${variables.BASE_URL}/orders/${params.cart_id}`;
+    try {
+      const { result } = await fetchData(url);
+      if (result?.items.length === 0) navigate("../menu", { replace: true });
 
-    const fetchOrder = async () => {
-      try {
-        const { result } = await fetchData(url);
-        if (result?.items.length === 0) navigate("../menu", { replace: true });
-        setOrderData(result.items);
-        setTotalPrice(result.totalPrice);
-      } catch (err) {
-        setError("Failed to fetch order data");
-      }
-    };
+      moreThanOnce
+        ? setOrderData((prevOrderData) =>
+            result.items.map((newItem: any) => {
+              const existingItem = prevOrderData.find(
+                (item) => item.id === newItem.id
+              );
+              return {
+                ...newItem,
+                quantity: existingItem
+                  ? existingItem.quantity
+                  : newItem.quantity,
+              };
+            })
+          )
+        : setOrderData(result.items);
+      setTotalPrice(result.totalPrice);
+    } catch (err) {
+      setError("Failed to fetch order data");
+    }
+  };
+
+  useEffect(() => {
+    // const timeout = setTimeout(() => {
+    //   fetchOrder();
+    // }, 300);
+
+    // return () => clearTimeout(timeout);
 
     fetchOrder();
   }, []);
 
-  const onClickAddOrMin = (e: any, orderItemId: number, currQty: number) => {
+  const fetchOrderDebounced = debounce(async () => {
+    // const url = `${variables.BASE_URL}/order_items/${orderItemId}`;
+    try {
+      await fetchOrder(true);
+      console.log(`Fetch`);
+    } catch (err) {
+      console.error("Failed to patch quantity", err);
+    }
+  }, 400);
+
+  const onClickAddOrMin = async (
+    e: any,
+    orderItemId: number,
+    currQty: number
+  ) => {
     e.preventDefault();
 
     console.log("min plus, aku ditekan, orderitemId: ", orderItemId);
@@ -89,27 +124,33 @@ export const Cart = () => {
     // const currentQuantity = isNaN(prevOrder.quantity) ? 0 : prevOrder.quantity;
 
     if (e.currentTarget.name === "substract") {
-      setOrderData(
-        orderData.map((prevOrder) => {
-          if (prevOrder.id === orderItemId) {
+      setOrderData((prevOrder) =>
+        prevOrder.map((item) => {
+          if (item.id === orderItemId) {
+            const substractUpdateQty =
+              item.quantity > 0 ? item.quantity - 1 : 0;
+            // setTotalPrice((prev) => (
+            //   prev: prev - prevOrder.
+            // ));
             return {
-              ...prevOrder,
-              quantity: prevOrder.quantity > 0 ? prevOrder.quantity - 1 : 0,
+              ...item,
+              quantity: substractUpdateQty,
             };
           }
-          return prevOrder;
+          return item;
         })
       );
     } else if (e.currentTarget.name === "add") {
-      setOrderData(
-        orderData.map((prevOrder) => {
-          if (prevOrder.id === orderItemId) {
+      setOrderData((prevOrder) =>
+        prevOrder.map((item) => {
+          const addUpdateQty = !isNaN(item.quantity) ? item.quantity + 1 : 0;
+          if (item.id === orderItemId) {
             return {
-              ...prevOrder,
-              quantity: !isNaN(prevOrder.quantity) ? prevOrder.quantity + 1 : 0,
+              ...item,
+              quantity: addUpdateQty,
             };
           }
-          return prevOrder;
+          return item;
         })
       );
     }
@@ -119,8 +160,9 @@ export const Cart = () => {
     const updatedOrder = orderData.find((order) => order.id === orderItemId);
     if (updatedOrder && Number(currQty) !== 0) {
       console.log(typeof currQty);
-      patchData(url, { quantity: currQty });
-      setQty(currQty);
+      await patchData(url, { quantity: currQty });
+      fetchOrderDebounced();
+      // setQty(currQty);
       // setReloaded(true);
     }
   };
@@ -163,7 +205,7 @@ export const Cart = () => {
             order={order}
             clickedQty={onClickAddOrMin}
             isReloaded={reloaded}
-            qty={qty}
+            qty={order.quantity}
           />
         ))}
 
