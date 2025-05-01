@@ -99,7 +99,7 @@ export const Cart = () => {
     // return () => clearTimeout(timeout);
 
     fetchOrder();
-  }, []);
+  }, [params.cart_id]);
 
   const fetchOrderDebounced = debounce(async () => {
     // const url = `${variables.BASE_URL}/order_items/${orderItemId}`;

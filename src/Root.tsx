@@ -11,6 +11,7 @@ import { AdminTransaction } from "./pages/AdminTransaction";
 import { AdminProduct } from "./pages/AdminProduct";
 // import Home from "./pages/Home";
 import OrderHistory from "./pages/OrderHistory";
+import Home from "./pages/Home";
 // import ProtectedRoutes from "./components/ProtectedRoute";
 // import { Role } from "./components/types";
 
@@ -30,7 +31,7 @@ const Root = () => {
           <Route path="/admin/transaction" element={<AdminTransaction />} />
           <Route path="/admin/product" element={<AdminProduct />} />
           <Route path="/order/history" element={<OrderHistory />} />
-          {/* <Route path="/home" element={<Home />} /> */}
+          <Route path="/home" element={<Home />} />
         </Routes>
       </AuthProvider>
     </Suspense>

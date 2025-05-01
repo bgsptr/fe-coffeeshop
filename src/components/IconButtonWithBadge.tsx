@@ -3,6 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import Badge, { badgeClasses } from "@mui/material/Badge";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCartOutlined";
 import SwitchButton from "./SwitchButton";
+import { useNavigate } from "react-router-dom";
 
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -15,6 +16,8 @@ export default function IconButtonWithBadge(props: {
   carts: any[];
   resetCartState: () => void;
 }) {
+
+  const navigate = useNavigate();
   return (
     <div className="relative group">
       <IconButton>
@@ -39,7 +42,7 @@ export default function IconButtonWithBadge(props: {
         </div>
         <div className="overflow-y-auto max-h-[300px]">
           {props.carts?.map((cart) => (
-            <div key={cart.id} className="block px-4 py-2">
+            <div key={cart.id} onClick={() => navigate(`../cart/${cart.id}`)} className="block px-4 py-2 cursor-pointer">
               <div className="flex justify-between">
                 <p className="mb-2 font-bold">ID: {cart.id}</p>
                 <SwitchButton orderId={cart.id} />
@@ -51,9 +54,9 @@ export default function IconButtonWithBadge(props: {
                     alt="product"
                     className="w-12 h-12 object-cover"
                   />
-                  <a href="#" className="hover:bg-gray-100">
+                  <p className="">
                     Product Name
-                  </a>
+                  </p>
                 </div>
                 <p className="font-bold">Rp{cart.totalPrice}</p>
               </div>
