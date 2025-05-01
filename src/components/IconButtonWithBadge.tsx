@@ -4,6 +4,8 @@ import Badge, { badgeClasses } from "@mui/material/Badge";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCartOutlined";
 import SwitchButton from "./SwitchButton";
 import { useNavigate } from "react-router-dom";
+import useContentCart from "../hooks/useContentCart";
+import { useEffect } from "react";
 
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -16,8 +18,13 @@ export default function IconButtonWithBadge(props: {
   carts: any[];
   resetCartState: () => void;
 }) {
-
   const navigate = useNavigate();
+  const { firstImageInItemCart, products } = useContentCart();
+
+  useEffect(() => {
+    console.log("icon button: ", products);
+  }, [])
+
   return (
     <div className="relative group">
       <IconButton>
@@ -42,7 +49,11 @@ export default function IconButtonWithBadge(props: {
         </div>
         <div className="overflow-y-auto max-h-[300px]">
           {props.carts?.map((cart) => (
-            <div key={cart.id} onClick={() => navigate(`../cart/${cart.id}`)} className="block px-4 py-2 cursor-pointer">
+            <div
+              key={cart.id}
+              onClick={() => navigate(`../cart/${cart.id}`)}
+              className="block px-4 py-2 cursor-pointer"
+            >
               <div className="flex justify-between">
                 <p className="mb-2 font-bold">ID: {cart.id}</p>
                 <SwitchButton orderId={cart.id} />
@@ -50,13 +61,15 @@ export default function IconButtonWithBadge(props: {
               <div className="flex justify-between">
                 <div className="flex items-start gap-3">
                   <img
-                    src=""
+                    src={firstImageInItemCart}
                     alt="product"
                     className="w-12 h-12 object-cover"
                   />
-                  <p className="">
-                    Product Name
-                  </p>
+                  {products.map((product) => (
+                    <p className="">
+                      {product.name}
+                    </p>
+                  ))}
                 </div>
                 <p className="font-bold">Rp{cart.totalPrice}</p>
               </div>

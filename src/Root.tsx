@@ -13,6 +13,7 @@ import { AdminProduct } from "./pages/AdminProduct";
 import OrderHistory from "./pages/OrderHistory";
 import Home from "./pages/Home";
 import { GoogleLogin } from "./pages/GoogleLogin";
+import About from "./pages/About";
 // import ProtectedRoutes from "./components/ProtectedRoute";
 // import { Role } from "./components/types";
 
@@ -33,6 +34,7 @@ const Root = () => {
           <Route path="/admin/product" element={<AdminProduct />} />
           <Route path="/order/history" element={<OrderHistory />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/about" element={<About />} />
           <Route path="/google/redirect" element={<GoogleLogin />} />
         </Routes>
       </AuthProvider>

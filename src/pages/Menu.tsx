@@ -9,6 +9,7 @@ import { fetchData } from "../utils/fetchData";
 import useCart from "../hooks/useCart";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import { variables } from "../constants/variable";
+import useContentCart from "../hooks/useContentCart";
 
 export interface Item {
   category: string; //ENUM
@@ -39,6 +40,8 @@ export const Menu = (): JSX.Element => {
 
   const cartSwitch = useCart();
 
+  const { setFirstImageInItemCart, setProducts } = useContentCart();
+
   useEffect(() => {
     const fetchItem = async () => {
       const url = `${variables.BASE_URL}/items?keyword=${keyword}`;
@@ -60,8 +63,23 @@ export const Menu = (): JSX.Element => {
       try {
         const res = await fetchData(url);
         console.log("compare cart: ", res);
+
+        const selectedItem = cartSwitch.items
+          .filter((item) => res.result.orderItemsId?.includes(item.id))
+          .map((item) => ({
+            itemId: item.id,
+            name: item.name,
+            image: item.image,
+          }));
+
+        console.log("selected item: ", selectedItem);
+
+        setFirstImageInItemCart(selectedItem[0].image);
+
+        setProducts(selectedItem);
+
         setOrderItemsId(res.result.orderItemsId);
-        
+
         setOrderId(res.result.orderId);
       } catch (err) {
         console.log(err);

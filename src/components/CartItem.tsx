@@ -7,7 +7,9 @@ import buttonPlus from "../assets/candra/button-order-plus.svg";
 import { ItemInCart } from "../pages/Cart";
 import { MouseEvent, useEffect } from "react";
 import { variables } from "../constants/variable";
-import { deleteData } from "../utils/deleteData";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 export const CartItem = (props: {
   order: ItemInCart;
@@ -16,16 +18,29 @@ export const CartItem = (props: {
   qty: number;
 }) => {
   const { order, clickedQty } = props;
+  const navigate = useNavigate();
 
   const removeButtonOnClick = (e: MouseEvent<HTMLButtonElement>) => {
     console.log("button remove clicked");
+    const token = Cookies.get("token");
 
     const deleteItemInCart = async () => {
       try {
         const url = `${variables.BASE_URL}/order_items/${e.currentTarget.id}`;
-        await deleteData(url);
+        const res = await axios.delete(url, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          // withCredentials: true
+        });
 
         console.log("delete data happen");
+
+        if (res.data.result.items_remaining <= 1) {
+          navigate("../../menu")
+        }
+
         window.location.reload();
         
       } catch (err) {
