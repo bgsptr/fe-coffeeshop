@@ -13,7 +13,7 @@ const About = () => {
       <div className="bg-[#B5B5B5] flex-grow">
         {/* card */}
         <div className="p-[3rem]">
-          <div className="flex mb-[8rem]">
+          <div className="flex mb-[8rem] gap-9">
             <div className="flex flex-col gap-[1.7rem]">
               <h6 className="text-[#43527D] font-bold text-[4rem]">
                 2017-till now
@@ -28,7 +28,7 @@ const About = () => {
             <img src={aboutRight} alt="" />
           </div>
 
-          <div className="flex gap-7 mb-[4rem]">
+          <div className="flex gap-9 mb-[4rem]">
             <img src={aboutLeft} alt="" />
             <div className="flex flex-col">
               <h6 className="text-[#43527D] font-bold text-xl">
@@ -49,9 +49,15 @@ const About = () => {
         </div>
 
         <div className="mb-[5rem] text-white w-full relative">
-          <img src={aboutPractice} alt="about-practice" className="object-cover w-full" />
+          <img
+            src={aboutPractice}
+            alt="about-practice"
+            className="object-cover w-full"
+          />
           <div className="p-[3rem] flex flex-col gap-3 absolute top-0">
-            <h6 className="font-semibold text-[4rem]">Sustainability Practices</h6>
+            <h6 className="font-semibold text-[4rem]">
+              Sustainability Practices
+            </h6>
             <p className="font-light w-1/2">
               "We are committed to sustainable practices, from using locally
               sourced ingredients to reducing our environmental footprint."
@@ -59,7 +65,7 @@ const About = () => {
           </div>
         </div>
 
-        <div className="flex p-[3rem] gap-7">
+        <div className="flex p-[3rem] gap-9">
           <div className="flex flex-col gap-[1.7rem]">
             <h6 className="font-semibold text-[5rem]">
               <span className="text-[#FFFFFF]">Our </span>
